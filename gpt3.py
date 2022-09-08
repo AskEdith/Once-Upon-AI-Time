@@ -1,12 +1,13 @@
 import openai
 
 
-def generate_with_prompt(prompt: str) -> str:
+def generate_with_prompt(prompt: str, temperature: float) -> str:
     """
     Generate text given input prompt.
     
     Args:
         prompt: Input prompt
+        temperature: Temperature of generation
 
     Returns:
         output

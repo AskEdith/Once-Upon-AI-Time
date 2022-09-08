@@ -27,7 +27,7 @@ with st.spinner("Writing..."):
     if option == "Random":
         plot_prompt = prompts.plot()
         try:
-            plot = gpt3.generate_with_prompt(plot_prompt)
+            plot = gpt3.generate_with_prompt(plot_prompt, 1.0)
         except Exception as e:
             print(e)
             st.warning("Failed to generate story.")
@@ -40,25 +40,28 @@ with st.spinner("Writing..."):
             st.stop()
 
     # Generate story from plot
-    story = None
+    story = plot
     print(f"Writing story using plot: {plot}")
-    for _ in range(5):
-        try:
-            story = gpt3.generate_with_prompt(plot)
-            if len(story.split("\n\n")) > 3:
-                break
-        except Exception as e:
-            print(e)
+    for _ in range(10):
+        if len(story.split(". ")) < 20:
+            try:
+                story_prompt = prompts.story_expansion(story)
+                story = gpt3.generate_with_prompt(story_prompt, 0.6)
+            except Exception as e:
+                print(e)
+
+        break
 
     parts = story.split("\n\n")
     parts = [part for part in parts if len(part) > 0]
 
-    for part in parts:
+    for i, part in enumerate(parts):
 
         st.write(part)
 
         try:
-            image_url = stable_diffusion.generate_image(part)
+            image_prompt = prompts.illustration(f"{parts[max(i - 1, 0)]}\n\n{parts[max(i, 0)]}")
+            image_url = stable_diffusion.generate_image(image_prompt)
             st.image(image_url, use_column_width=True)
         except Exception as e:
             print(e)

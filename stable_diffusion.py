@@ -23,7 +23,7 @@ def generate_image(prompt: str) -> str:
 
         try:
             image_url = model.predict(
-                prompt=f"Landscape watercolor in the style of John DuVal for the prompt:\n\n{prompt}",
+                prompt=prompt,
                 width=768,
                 height=512,
                 num_inference_steps=50
