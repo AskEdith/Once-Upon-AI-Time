@@ -14,7 +14,7 @@ footer {visibility: hidden;}
 """
 st.markdown(hide_menu_style, unsafe_allow_html=True)
 
-st.title("AI Short Story")
+st.title("AI Short Story Generator")
 st.write("Presented by [AskEdith.ai](https://www.askedith.ai)")
 
 story_prompt = st.text_area("Prompt")
