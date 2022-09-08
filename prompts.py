@@ -32,20 +32,22 @@ def story(plot: str) -> str:
     Returns:
         prompt
     """
-    return f"""Write a story using the following plot: A great oak stands near a brook in which some slender reeds grow. The winds blow, and the oak stands upright while the reeds bow low and sing a sad song. The oak complains that the winds don't harm it, but the reeds say that the end is coming. A hurricane rushes out of the north and blows the oak over, and it lies among the reeds.
+    return f"""Write a story using the following plot: 
+    
+A young boy wakes up on Christmas morning to find that his presents have all been taken by a group of mischievous monkeys. The boy sets off into the jungle to find the monkeys and get his presents back. Along the way he makes some new friends who help him on his quest. In the end, the boy gets his presents back and learns the true meaning of Christmas.
 
 Story:
 
-A Giant Oak stood near a brook in which grew some slender Reeds. When the wind blew, the great Oak stood proudly upright with its hundred arms uplifted to the sky. But the Reeds bowed low in the wind and sang a sad and mournful song.
+A young boy named Timmy woke up on Christmas morning to find that all of his presents were gone. He looked out the window and saw a group of mischievous monkeys running around with his presents. Timmy was determined to get his presents back, so he set off into the jungle to find the monkeys.
 
-"You have reason to complain," said the Oak. "The slightest breeze that ruffles the surface of the water makes you bow your heads, while I, the mighty Oak, stand upright and firm before the howling tempest."
+Along the way, Timmy made some new friends who helped him on his quest. He met a friendly lion who showed him the way, a helpful elephant who gave him a ride, and a wise monkey who helped him figure out how to get his presents back.
 
-"Do not worry about us," replied the Reeds. "The winds do not harm us. We bow before them and so we do not break. You, in all your pride and strength, have so far resisted their blows. But the end is coming."
-
-As the Reeds spoke a great hurricane rushed out of the north. The Oak stood proudly and fought against the storm, while the yielding Reeds bowed low. The wind redoubled in fury, and all at once the great tree fell, torn up by the roots, and lay among the pitying Reeds.
+In the end, Timmy got his presents back and learned the true meaning of Christmas. He learned that Christmas is about giving, not receiving.
 
 
-Write a story using the following plot: {plot}
+Write a story using the following plot:
+
+{plot}
 
 Story:
 """
