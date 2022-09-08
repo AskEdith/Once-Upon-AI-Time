@@ -1,5 +1,4 @@
 import streamlit as st
-import streamlit.components.v1 as components
 import prompts
 import gpt3
 import stable_diffusion
@@ -8,7 +7,7 @@ import stable_diffusion
 st.set_page_config(page_title="Once Upon AI Time -- by AskEdith", page_icon="story-book.png")
 
 # Add Google Analytics
-components.html("""
+google_analytics = """
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-5HHDMW86CP"></script>
 <script>
@@ -18,7 +17,8 @@ components.html("""
 
   gtag('config', 'G-5HHDMW86CP');
 </script>
-""")
+"""
+st.markdown(google_analytics, unsafe_allow_html=True)
 
 # Don't show certain things
 hide_menu_style = """
