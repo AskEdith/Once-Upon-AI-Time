@@ -53,6 +53,8 @@ with st.spinner("Writing..."):
             logprobs=10,
         )
         output_label = response["choices"][0].text
+
+        # Regenerate story if failed content filter or story too short
         if int(output_label) < 2 and len(story.split("\n\n")) > 3:
             break
 
