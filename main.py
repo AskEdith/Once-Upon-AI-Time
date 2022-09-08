@@ -3,7 +3,7 @@ import openai
 import replicate
 
 
-model = replicate.models.get("stability-ai/stable-diffusion")
+st.set_page_config(page_title="Once Upon AI Time -- by AskEdith", page_icon="story-book.png")
 
 # Don't show certain things
 hide_menu_style = """
@@ -60,6 +60,9 @@ with st.spinner("Writing..."):
 
 parts = story.split("\n\n")
 parts = [part for part in parts if len(part) > 0]
+
+# Load image model
+model = replicate.models.get("stability-ai/stable-diffusion")
 
 for part in parts:
 
