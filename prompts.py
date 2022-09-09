@@ -30,4 +30,4 @@ def illustration(story: str) -> str:
     Returns:
         prompt
     """
-    return f"Landscape watercolor in the style of John DuVal for the scene:\n\n{story}"
+    return f"Watercolor in the style of John DuVal for the scene:\n\n{story}"
