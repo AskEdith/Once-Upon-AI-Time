@@ -1,24 +1,15 @@
+from datetime import datetime
+import requests
+import os
+
 import streamlit as st
+
 import prompts
 import gpt3
 import stable_diffusion
 
 
 st.set_page_config(page_title="Once Upon AI Time -- by AskEdith", page_icon="story-book.png")
-
-# Add Google Analytics
-google_analytics = """
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-5HHDMW86CP"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-5HHDMW86CP');
-</script>
-"""
-st.markdown(google_analytics, unsafe_allow_html=True)
 
 # Don't show certain things
 hide_menu_style = """
@@ -55,7 +46,6 @@ with st.spinner("Writing..."):
 
     # Generate story from plot
     story = plot
-    print(f"Writing story using plot: {plot}")
     for _ in range(10):
         if len(story.split(". ")) < 20:
             try:
@@ -66,19 +56,47 @@ with st.spinner("Writing..."):
 
         break
 
+    # For uploading to Airtable
+    airtable_prompt = plot
+    airtable_story = ""
+    airtable_date = datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ")
+
+    # Render story
     parts = story.split("\n\n")
     parts = [part for part in parts if len(part) > 0]
 
-    for i, part in enumerate(parts):
+    for part in parts:
 
         st.write(part)
+        airtable_story += part + "\n\n"
 
         try:
-            image_prompt = prompts.illustration(f"{parts[max(i - 1, 0)]}\n\n{parts[max(i, 0)]}")
+            image_prompt = prompts.illustration(part)
             image_url = stable_diffusion.generate_image(image_prompt)
+            airtable_story += image_url + "\n\n"
             st.image(image_url, use_column_width=True)
         except Exception as e:
             print(e)
+
+    # Write to Airtable
+    requests.post(
+        url="https://api.airtable.com/v0/appZJEELvJrHMxCHq/Table%201",
+        headers={
+            "Authorization": f"Bearer {os.environ.get('AIRTABLE_API_KEY')}",
+            "Content-Type": "application/json",
+        },
+        json={
+            "records": [
+                {
+                    "fields": {
+                        "Prompt": airtable_prompt,
+                        "Story": airtable_story,
+                        "Date": airtable_date
+                    }
+                }
+            ]
+        }
+    )
 
 st.write("This story brought to you by [AskEdith.ai](https://www.askedith.ai)")
 rerun = st.button("Rerun")
