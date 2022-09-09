@@ -20,7 +20,7 @@ def story_expansion(existing_story: str) -> str:
     Returns:
         prompt
     """
-    return f"Rewrite this as a 2 page story with much more detail and a happy ending. Give the characters names and describe the environment and plot in greater detail:\n\n{existing_story}\n\n"
+    return f"Rewrite this as a 2 page story with much more detail, a climax, and a happy ending. Give the characters names and describe the environment and plot in greater detail:\n\n{existing_story}\n\n"
 
 
 def illustration(story: str) -> str:
@@ -30,4 +30,4 @@ def illustration(story: str) -> str:
     Returns:
         prompt
     """
-    return f"Watercolor in the style of John DuVal for the scene:\n\n{story}"
+    return f"Watercolor in the style of John DuVal for:\n\n{story}"

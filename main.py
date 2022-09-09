@@ -74,13 +74,13 @@ with st.spinner("Writing..."):
     parts = story.split("\n\n")
     parts = [part for part in parts if len(part) > 0]
 
-    for part in parts:
+    for i, part in enumerate(parts):
 
         st.write(part)
         airtable_story += part + "\n\n"
 
         try:
-            image_prompt = prompts.illustration(part)
+            image_prompt = prompts.illustration(f"{plot}\n\n{'' if i == 0 else parts[i - 1]}\n\n{part}")
             image_url = stable_diffusion.generate_image(image_prompt)
             airtable_story += image_url + "\n\n"
             st.image(image_url, use_column_width=True)
@@ -108,4 +108,4 @@ with st.spinner("Writing..."):
         }
     )
 
-st.write("This story brought to you by [AskEdith.ai](https://www.askedith.ai)")
+st.write("This story is brought to you by [AskEdith.ai](https://www.askedith.ai)")
