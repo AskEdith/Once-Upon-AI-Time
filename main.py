@@ -36,7 +36,7 @@ airtable_type = option
 # Read plot from text field if Prompted
 plot = ""
 if option == "Prompted":
-    plot = st.text_input('Prompt')
+    plot = st.text_area('Prompt')
     if len(plot) == 0:
         st.stop()
 
