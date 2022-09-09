@@ -20,16 +20,24 @@ footer {visibility: hidden;}
 """
 st.markdown(hide_menu_style, unsafe_allow_html=True)
 
+# For uploading to Airtable
+airtable_prompt = ""
+airtable_story = ""
+airtable_date = datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ")
+airtable_type = ""
+
 st.title("Once Upon AI Time")
 st.write("Presented by [AskEdith.ai](https://www.askedith.ai)")
 
 # Generate plot or allow user to prompt
 option = st.selectbox("Random or Prompted?", ("Random", "Prompted"))
+airtable_type = option
 
 with st.spinner("Writing..."):
 
     plot = None
     if option == "Random":
+
         plot_prompt = prompts.plot()
         try:
             plot = gpt3.generate_with_prompt(plot_prompt, 1.0)
@@ -44,6 +52,8 @@ with st.spinner("Writing..."):
         if len(plot) == 0:
             st.stop()
 
+    airtable_prompt = plot
+
     # Generate story from plot
     story = plot
     for _ in range(10):
@@ -55,11 +65,6 @@ with st.spinner("Writing..."):
                 print(e)
 
         break
-
-    # For uploading to Airtable
-    airtable_prompt = plot
-    airtable_story = ""
-    airtable_date = datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ")
 
     # Render story
     parts = story.split("\n\n")
@@ -91,7 +96,8 @@ with st.spinner("Writing..."):
                     "fields": {
                         "Prompt": airtable_prompt,
                         "Story": airtable_story,
-                        "Date": airtable_date
+                        "Date": airtable_date,
+                        "Type": airtable_type,
                     }
                 }
             ]
