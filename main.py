@@ -33,23 +33,27 @@ st.write("Presented by [AskEdith.ai](https://www.askedith.ai)")
 option = st.selectbox("Random or Prompted?", ("Random", "Prompted"))
 airtable_type = option
 
+# Read plot from text field if Prompted
+plot = ""
+if option == "Prompted":
+    plot = st.text_input('Prompt')
+    if len(plot) == 0:
+        st.stop()
+
+# Prevent auto generate
+if not st.button("Generate"):
+    st.stop()
+
 with st.spinner("Writing..."):
 
-    plot = None
-    if option == "Random":
-
-        plot_prompt = prompts.plot()
+    # Generate plot if empty
+    if len(plot) == 0:
         try:
+            plot_prompt = prompts.plot()
             plot = gpt3.generate_with_prompt(plot_prompt, 1.0)
         except Exception as e:
             print(e)
             st.warning("Failed to generate story.")
-            st.stop()
-
-    elif option == "Prompted":
-        plot = st.text_area('Prompt')
-
-        if len(plot) == 0:
             st.stop()
 
     airtable_prompt = plot
@@ -105,4 +109,3 @@ with st.spinner("Writing..."):
     )
 
 st.write("This story brought to you by [AskEdith.ai](https://www.askedith.ai)")
-rerun = st.button("Rerun")
