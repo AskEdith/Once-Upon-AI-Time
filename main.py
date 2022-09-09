@@ -30,7 +30,7 @@ st.title("Once Upon AI Time")
 st.write("Presented by [AskEdith.ai](https://www.askedith.ai)")
 
 # Generate plot or allow user to prompt
-option = st.selectbox("Random or Prompted?", ("Random", "Prompted"))
+option = st.selectbox("Random or Prompted?", ("Prompted", "Random"))
 airtable_type = option
 
 # Read plot from text field if Prompted
