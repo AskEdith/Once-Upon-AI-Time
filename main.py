@@ -96,7 +96,8 @@ with st.spinner("Writing..."):
                 print(e)
 
     # Write to Airtable
-    airtable.post_results(plot, story_with_images, type_)
+    if "story" not in params:
+        airtable.post_results(plot, story_with_images, type_)
 
 print(f"https://onceuponaitime.com?type={type_}&prompt={urllib.parse.quote_plus(codecs.encode(plot, 'rot13'))}&story={urllib.parse.quote_plus(codecs.encode(story_with_images, 'rot13'))}")
 
