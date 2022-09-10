@@ -1,12 +1,9 @@
-from datetime import datetime
-import requests
-import os
+import urllib.parse
+import codecs
 
 import streamlit as st
 
-import prompts
-import gpt3
-import stable_diffusion
+from utils import prompts, gpt3, stable_diffusion, airtable
 
 
 st.set_page_config(page_title="Once Upon AI Time -- by AskEdith", page_icon="story-book.png")
@@ -20,92 +17,89 @@ footer {visibility: hidden;}
 """
 st.markdown(hide_menu_style, unsafe_allow_html=True)
 
-# For uploading to Airtable
-airtable_prompt = ""
-airtable_story = ""
-airtable_date = datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ")
-airtable_type = ""
+# Load params if relevant
+params = st.experimental_get_query_params()
+st.experimental_set_query_params()
 
 st.title("Once Upon AI Time")
 st.write("Presented by [AskEdith.ai](https://www.askedith.ai)")
 
 # Generate plot or allow user to prompt
-option = st.selectbox("Random or Prompted?", ("Prompted", "Random"))
-airtable_type = option
+type_ = st.selectbox(
+    "Random or Prompted?",
+    ("Prompted", "Random"),
+    index=(1 if "type" in params and params["type"][0] == "Prompted" else 0)
+)
 
 # Read plot from text field if Prompted
-plot = ""
-if option == "Prompted":
-    plot = st.text_area('Prompt')
+plot = codecs.decode(params["prompt"][0], "rot13") if ("prompt" in params and "type" in params and params["type"][0] == "Prompted") else ""
+if type_ == "Prompted":
+    plot = st.text_area("Prompt", value=plot)
     if len(plot) == 0:
         st.stop()
 
 # Prevent auto generate
-if not st.button("Generate"):
+if not st.button("Generate") and "story" not in params:
     st.stop()
 
 with st.spinner("Writing..."):
 
-    # Generate plot if empty
-    if len(plot) == 0:
-        try:
-            plot_prompt = prompts.plot()
-            plot = gpt3.generate_with_prompt(plot_prompt, 1.0)
-        except Exception as e:
-            print(e)
-            st.warning("Failed to generate story.")
-            st.stop()
+    # Only generate if story is not in URL params
+    story = codecs.decode(params["story"][0], "rot13") if "story" in params else ""
+    if story == "":
 
-    airtable_prompt = plot
-
-    # Generate story from plot
-    story = plot
-    for _ in range(10):
-        if len(story.split(". ")) < 20:
+        # Generate plot if empty
+        if len(plot) == 0:
             try:
-                story_prompt = prompts.story_expansion(story)
-                story = gpt3.generate_with_prompt(story_prompt, 0.6)
+                plot_prompt = prompts.plot()
+                plot = gpt3.generate_with_prompt(plot_prompt, 1.0)
             except Exception as e:
                 print(e)
+                st.warning("Failed to generate story.")
+                st.stop()
 
-        break
+        # Generate story from plot
+        story = plot
+        for _ in range(10):
+            if len(story.split(". ")) < 20:
+                try:
+                    story_prompt = prompts.story_expansion(story)
+                    story = gpt3.generate_with_prompt(story_prompt, 0.6)
+                except Exception as e:
+                    print(e)
+
+            break
 
     # Render story
     parts = story.split("\n\n")
     parts = [part for part in parts if len(part) > 0]
 
+    story_with_images = ""
+
     for i, part in enumerate(parts):
 
-        st.write(part)
-        airtable_story += part + "\n\n"
-
-        try:
-            image_prompt = prompts.illustration(f"{plot}\n\n{'' if i == 0 else parts[i - 1]}\n\n{part}")
-            image_url = stable_diffusion.generate_image(image_prompt)
-            airtable_story += image_url + "\n\n"
+        # Need to account for when the story is embedded in URL
+        if "replicate.com" not in part:
+            # st.markdown(f"##### {part}")
+            st.write(part)
+            story_with_images += part + "\n\n"
+        else:
+            image_url = part
+            story_with_images += image_url + "\n\n"
             st.image(image_url, use_column_width=True)
-        except Exception as e:
-            print(e)
+
+        if "replicate.com" not in story:
+            try:
+                image_prompt = prompts.illustration(f"{plot}\n\n{'' if i == 0 else parts[i - 1]}\n\n{part}")
+                image_url = stable_diffusion.generate_image(image_prompt)
+                story_with_images += image_url + "\n\n"
+                st.image(image_url, use_column_width=True)
+            except Exception as e:
+                print(e)
 
     # Write to Airtable
-    requests.post(
-        url="https://api.airtable.com/v0/appZJEELvJrHMxCHq/Table%201",
-        headers={
-            "Authorization": f"Bearer {os.environ.get('AIRTABLE_API_KEY')}",
-            "Content-Type": "application/json",
-        },
-        json={
-            "records": [
-                {
-                    "fields": {
-                        "Prompt": airtable_prompt,
-                        "Story": airtable_story,
-                        "Date": airtable_date,
-                        "Type": airtable_type,
-                    }
-                }
-            ]
-        }
-    )
+    airtable.post_results(plot, story_with_images, type_)
+
+print(f"localhost:8501?type={type_}&prompt={urllib.parse.quote_plus(codecs.encode(plot, 'rot13'))}&story={urllib.parse.quote_plus(codecs.encode(story_with_images, 'rot13'))}")
 
 st.write("This story is brought to you by [AskEdith.ai](https://www.askedith.ai)")

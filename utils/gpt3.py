@@ -19,7 +19,7 @@ def generate_with_prompt(prompt: str, temperature: float) -> str:
     response = openai.Completion.create(
         model="text-davinci-002",
         prompt=prompt,
-        temperature=0.9,
+        temperature=temperature,
         max_tokens=500,
         top_p=1,
         frequency_penalty=0,
