@@ -21,22 +21,20 @@ st.markdown(hide_menu_style, unsafe_allow_html=True)
 params = st.experimental_get_query_params()
 st.experimental_set_query_params()
 
-st.title("Once Upon AI Time")
+st.title("OnceUponAITime.com")
 st.write("Presented by [AskEdith.ai](https://www.askedith.ai)")
 
 # Generate plot or allow user to prompt
 type_ = st.selectbox(
     "Random or Prompted?",
     ("Prompted", "Random"),
-    index=(1 if "type" in params and params["type"][0] == "Prompted" else 0)
+    index=(1 if "type" in params and params["type"][0] == "Random" else 0)
 )
 
 # Read plot from text field if Prompted
 plot = codecs.decode(params["prompt"][0], "rot13") if ("prompt" in params and "type" in params and params["type"][0] == "Prompted") else ""
 if type_ == "Prompted":
     plot = st.text_area("Prompt", value=plot)
-    if len(plot) == 0:
-        st.stop()
 
 # Prevent auto generate
 if not st.button("Generate") and "story" not in params:
@@ -52,7 +50,7 @@ with st.spinner("Writing..."):
         if len(plot) == 0:
             try:
                 plot_prompt = prompts.plot()
-                plot = gpt3.generate_with_prompt(plot_prompt, 1.0)
+                plot = gpt3.generate_with_prompt(plot_prompt, 0.8)
             except Exception as e:
                 print(e)
                 st.warning("Failed to generate story.")
@@ -100,6 +98,6 @@ with st.spinner("Writing..."):
     # Write to Airtable
     airtable.post_results(plot, story_with_images, type_)
 
-print(f"localhost:8501?type={type_}&prompt={urllib.parse.quote_plus(codecs.encode(plot, 'rot13'))}&story={urllib.parse.quote_plus(codecs.encode(story_with_images, 'rot13'))}")
+print(f"https://onceuponaitime.com?type={type_}&prompt={urllib.parse.quote_plus(codecs.encode(plot, 'rot13'))}&story={urllib.parse.quote_plus(codecs.encode(story_with_images, 'rot13'))}")
 
 st.write("This story is brought to you by [AskEdith.ai](https://www.askedith.ai)")
