@@ -28,7 +28,7 @@ st.write("Presented by [AskEdith.ai](https://www.askedith.ai)")
 type_ = st.selectbox(
     "Random or Prompted?",
     ("Prompted", "Random"),
-    index=(1 if "type" in params and params["type"][0] == "Random" else 0)
+    index=(1 if "type" in params and params["type"][0] == "Random" else 0),
 )
 
 # Read plot from text field if Prompted
@@ -99,7 +99,8 @@ with st.spinner("Writing..."):
     if "story" not in params:
         airtable.post_results(plot, story_with_images, type_)
 
-download_url = f"https://onceuponaitime.com?type={type_}&prompt={urllib.parse.quote_plus(codecs.encode(plot, 'rot13'))}&story={urllib.parse.quote_plus(codecs.encode(story_with_images, 'rot13'))}"
-st.download_button('Download Story', screenshot.capture(download_url, 700, 800 + (600 * (len(story_with_images.split("replicate.com")) - 1))), file_name="Once_Upon_AI_Time.jpg")
+story_url = f"https://onceuponaitime.com?type={type_}&prompt={urllib.parse.quote_plus(codecs.encode(plot, 'rot13'))}&story={urllib.parse.quote_plus(codecs.encode(story_with_images, 'rot13'))}"
+download_url = screenshot.link(story_url, 700, 800 + (600 * (len(story_with_images.split("replicate.com")) - 1)))
 
-st.write("This story is brought to you by [AskEdith.ai](https://www.askedith.ai)")
+st.write("Brought to you by [AskEdith.ai](https://www.askedith.ai)")
+st.write(f"[Download]({download_url}) this story")

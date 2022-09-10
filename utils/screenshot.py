@@ -2,9 +2,9 @@ import requests
 import urllib.parse
 
 
-def capture(url: str, width: int, height: int) -> bytes:
+def link(url: str, width: int, height: int) -> bytes:
     """
-    Capture screenshot of a URL and save to file.
+    Get capture link for screenshot of a URL and save to file.
 
     Args:
         url: Website URL
@@ -15,7 +15,4 @@ def capture(url: str, width: int, height: int) -> bytes:
     Returns:
         bytes
     """
-    print("RANNNN")
-    response = requests.get(f"https://api.screenshotmachine.com?key=2108fd&url={urllib.parse.quote_plus(url)}&device=desktop&dimension={width}x{height}&format=jpg&cacheLimit=0&delay=3000")
-    
-    return response.content
+    return f"https://api.screenshotmachine.com?key=2108fd&url={urllib.parse.quote_plus(url)}&device=desktop&dimension={width}x{height}&format=jpg&delay=5000"
