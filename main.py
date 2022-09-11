@@ -22,7 +22,7 @@ params = st.experimental_get_query_params()
 st.experimental_set_query_params()
 
 st.title("OnceUponAITime.com")
-st.write("Presented by [AskEdith.ai](https://www.askedith.ai)")
+st.write("Presented by [AskEdith.ai](https://www.askedith.ai) -- Follow [@jrdzha](https://twitter.com/its_jared_zhao) for updates")
 
 # Generate plot or allow user to prompt
 type_ = st.selectbox(
