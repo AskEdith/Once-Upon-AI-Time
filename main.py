@@ -3,7 +3,7 @@ import codecs
 
 import streamlit as st
 
-from utils import prompts, gpt3, stable_diffusion, airtable, screenshot
+from utils import prompts, gpt3, stable_diffusion
 
 
 st.set_page_config(page_title="Once Upon AI Time -- by AskEdith", page_icon="story-book.png")
@@ -78,7 +78,6 @@ with st.spinner("Writing..."):
 
         # Need to account for when the story is embedded in URL
         if "replicate.com" not in part:
-            # st.markdown(f"##### {part}")
             st.write(part)
             story_with_images += part + "\n\n"
         else:
@@ -95,12 +94,6 @@ with st.spinner("Writing..."):
             except Exception as e:
                 print(e)
 
-    # Write to Airtable
-    if "story" not in params:
-        airtable.post_results(plot, story_with_images, type_)
-
 story_url = f"https://onceuponaitime.com?type={type_}&prompt={urllib.parse.quote_plus(codecs.encode(plot, 'rot13'))}&story={urllib.parse.quote_plus(codecs.encode(story_with_images, 'rot13'))}"
-download_url = screenshot.link(story_url, 700, 800 + (600 * (len(story_with_images.split("replicate.com")) - 1)))
 
 st.write("Brought to you by [AskEdith.ai](https://www.askedith.ai)")
-st.write(f"[Download]({download_url}) this story")
