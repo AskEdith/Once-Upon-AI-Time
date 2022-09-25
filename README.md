@@ -1,5 +1,7 @@
 # Once Upon AI Time
 
+Check out the demo: [http://onceuponaitime.com](http://onceuponaitime.com).
+
 ## Dependencies
 
 You'll need an OpenAI account with access to GPT-3, and a Replicate (replicate.com) account.
